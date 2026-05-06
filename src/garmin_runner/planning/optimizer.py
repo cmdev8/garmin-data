@@ -20,7 +20,7 @@ from garmin_runner.planning.scoring import SCORING_WEIGHTS, PlanScorer
 from garmin_runner.utils.io import read_table, write_json, write_table
 
 
-class V2PlanOptimizer:
+class TrainingPlanOptimizer:
     def __init__(
         self,
         candidate_generator: CandidatePlanGenerator | None = None,
@@ -139,7 +139,7 @@ def build_athlete_state(
     )
 
 
-def run_v2_optimizer(
+def run_optimizer(
     *,
     config: AthleteConfig,
     activity_features: list[dict],
@@ -156,7 +156,7 @@ def run_v2_optimizer(
         fitness_state=fitness_state,
         performance_change=performance_change,
     )
-    result = V2PlanOptimizer(scorer=PlanScorer(ml_result)).optimize(state)
+    result = TrainingPlanOptimizer(scorer=PlanScorer(ml_result)).optimize(state)
     selected_json = selected_plan_to_json(result.selected, state)
     if out_dir is not None:
         out = Path(out_dir)
@@ -179,11 +179,11 @@ def run_plan(
     optimizer: str = "default",
     planning_horizon_days: int | None = None,
 ) -> dict:
-    if optimizer not in {"default", "v2"}:
+    if optimizer != "default":
         raise ValueError("standalone plan command uses the built-in optimizer")
     config = load_athlete_config(athlete_config, planning_horizon_days=planning_horizon_days)
     root = Path(input_dir)
-    return run_v2_optimizer(
+    return run_optimizer(
         config=config,
         activity_features=read_table(root / "activity_features.parquet"),
         weekly_features=read_table(root / "weekly_features.parquet"),

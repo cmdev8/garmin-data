@@ -13,7 +13,7 @@ from garmin_runner.models.ml import MLResult, train_per_run_model
 from garmin_runner.models.performance import build_predictions
 from garmin_runner.models.performance_change import build_performance_change
 from garmin_runner.models.training_blocks import classify_training_blocks
-from garmin_runner.planning.optimizer import run_v2_optimizer
+from garmin_runner.planning.optimizer import run_optimizer
 from garmin_runner.reporting.markdown_report import build_report
 from garmin_runner.run_walk.metrics import run_walk_metrics
 from garmin_runner.run_walk.segmenter import segment_records
@@ -83,7 +83,7 @@ def run_analysis(config: AnalysisConfig | None = None, **legacy_kwargs) -> Analy
     training_blocks = classify_training_blocks(weekly_features, fitness_state)
     performance_change = build_performance_change(activity_features, weekly_features, fitness_state)
     ml_result = train_per_run_model(daily_features, weekly_features, fitness_state)
-    optimizer_payload = run_v2_optimizer(
+    optimizer_payload = run_optimizer(
         config=config.athlete_config,
         activity_features=activity_features,
         weekly_features=weekly_features,

@@ -9,7 +9,7 @@ from garmin_runner.config import load_athlete_config
 from garmin_runner.planning.candidates import CandidatePlanGenerator
 from garmin_runner.planning.constraints import ConstraintValidator
 from garmin_runner.planning.historical import extract_historical_improvement_driver
-from garmin_runner.planning.optimizer import V2PlanOptimizer, run_v2_optimizer
+from garmin_runner.planning.optimizer import TrainingPlanOptimizer, run_optimizer
 from garmin_runner.planning.scoring import PlanScorer
 from garmin_runner.planning.schema import AthleteState, CandidatePlan, HistoricalDriver, RunWalkType, WeakSystem, WorkoutType
 from garmin_runner.planning.templates import make_workout
@@ -161,7 +161,7 @@ def test_rejects_vo2_when_fatigue_is_high():
 def test_high_fatigue_selects_recovery_week():
     state = make_state(current_fatigue=85, overload_risk=0.7, weak_system="vo2max")
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family == "recovery_week"
     assert all(w.workout_type not in {"vo2max", "threshold"} for w in result.selected.workouts)
@@ -170,7 +170,7 @@ def test_high_fatigue_selects_recovery_week():
 def test_high_fatigue_long_horizon_recovers_first_then_returns_to_easy_running():
     state = make_state(current_fatigue=85, overload_risk=0.7, weak_system="vo2max", horizon_days=28)
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
     first_week = result.selected.workouts[:7]
     later_weeks = result.selected.workouts[7:]
 
@@ -186,7 +186,7 @@ def test_high_fatigue_long_horizon_recovers_first_then_returns_to_easy_running()
 def test_threshold_weakness_selects_threshold_or_base_when_fatigue_is_moderate():
     state = make_state(current_fatigue=45, overload_risk=0.2, weak_system="threshold")
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family in {"threshold_focus_week", "base_build_week"}
 
@@ -230,7 +230,7 @@ def test_planned_run_walk_selects_run_walk_progression():
         weak_system="aerobic_base",
     )
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family == "run_walk_progression_week"
     assert any(w.run_walk_prescription for w in result.selected.workouts)
@@ -245,7 +245,7 @@ def test_historical_quality_driver_can_select_harder_plan_when_safe():
         historical_improvement_driver_label="Kemény arány",
     )
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family in {"threshold_focus_week", "vo2_focus_week", "speed_support_week"}
     assert any(w.workout_type in {"threshold", "vo2max", "speed"} for w in result.selected.workouts)
@@ -263,7 +263,7 @@ def test_historical_quality_driver_does_not_override_high_fatigue():
         historical_improvement_driver_label="Kemény arány",
     )
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family == "recovery_week"
     assert all(w.workout_type not in {"threshold", "vo2max", "speed"} for w in result.selected.workouts)
@@ -278,7 +278,7 @@ def test_historical_long_run_driver_favors_long_run_focus():
         historical_improvement_driver_label="Hosszú futás",
     )
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.family in {"long_run_focus_week", "base_build_week"}
     assert result.selected.historical_driver_match > 0
@@ -294,7 +294,7 @@ def test_disabled_run_walk_does_not_generate_run_walk_candidates_or_prescription
     )
 
     plans = CandidatePlanGenerator().generate(state)
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert all(plan.family != "run_walk_progression_week" for plan in plans)
     assert all(not workout.run_walk_prescription for plan in plans for workout in plan.workouts)
@@ -316,7 +316,7 @@ def test_run_walk_history_does_not_create_prescriptions_when_candidates_disabled
         }
     ]
 
-    result = run_v2_optimizer(
+    result = run_optimizer(
         config=config,
         activity_features=activity_features,
         weekly_features=[{"date": "2026-05-05", "distance_7d_km": 30.0, "load_7d": 300.0, "easy_fraction": 0.8}],
@@ -341,7 +341,7 @@ def test_run_walk_prescriptions_require_explicit_candidate_toggle():
         }
     ]
 
-    result = run_v2_optimizer(
+    result = run_optimizer(
         config=config,
         activity_features=activity_features,
         weekly_features=[{"date": "2026-05-05", "distance_7d_km": 30.0, "load_7d": 300.0, "easy_fraction": 0.8}],
@@ -361,7 +361,7 @@ def test_forced_run_walk_does_not_get_vo2_or_speed():
         current_fatigue=45,
     )
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert all(w.workout_type not in {"vo2max", "speed"} for w in result.selected.workouts)
     assert any(w.run_walk_prescription for w in result.selected.workouts)
@@ -410,7 +410,7 @@ def test_does_not_schedule_workouts_on_unavailable_days():
 def test_respects_max_minutes_per_week():
     state = make_state(max_minutes_per_week=75)
 
-    result = V2PlanOptimizer().optimize(state)
+    result = TrainingPlanOptimizer().optimize(state)
 
     assert result.selected.total_duration_min <= 75
 
@@ -441,7 +441,7 @@ def test_rejects_long_run_above_allowed_share():
     assert "long_run_too_large" in result.hard_reasons
 
 
-def test_cli_analyze_is_v2_only_and_exports_only_when_requested(tmp_path: Path):
+def test_cli_analyze_uses_builtin_optimizer_and_exports_only_when_requested(tmp_path: Path):
     fit_dir = tmp_path / "fit"
     out_dir = tmp_path / "out"
     fit_dir.mkdir()
