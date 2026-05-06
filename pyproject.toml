@@ -14,7 +14,7 @@ dependencies = [
   "pandas",
   "pyarrow",
   "PyYAML",
-  "reportlab",
+  "reportlab>=4.2,<5",
   "rich",
   "scikit-learn",
   "streamlit",
