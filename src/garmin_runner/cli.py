@@ -35,7 +35,7 @@ def analyze(
         typer.Option(help="Override planning.horizon_days from athlete config. Valid range: 1-28."),
     ] = None,
 ) -> None:
-    """Run v2 ML analysis. Results stay in memory unless --export-dir is set."""
+    """Run ML analysis. Results stay in memory unless --export-dir is set."""
     config = load_athlete_config(
         athlete_config,
         planning_horizon_days=planning_horizon_days,

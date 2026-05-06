@@ -43,7 +43,7 @@ class PlanScorer:
                 plan.expected_adaptation = _clip(0.65 * plan.expected_adaptation + 0.35 * float(ml_adaptation))
             if ml_overload is not None:
                 plan.overload_risk = _clip(0.75 * plan.overload_risk + 0.25 * float(ml_overload))
-            plan.explanation.append("ML prediction blended into v2 score")
+            plan.explanation.append("ML prediction blended into optimizer score")
         plan.race_specificity = _race_specificity(plan, state)
         plan.missing_stimulus_score = _missing_stimulus_score(plan, state)
         plan.historical_driver_match = _historical_driver_match(plan, state)

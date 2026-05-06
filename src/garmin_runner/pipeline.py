@@ -63,7 +63,7 @@ class AnalysisResult:
 
 
 def run_analysis(config: AnalysisConfig | None = None, **legacy_kwargs) -> AnalysisResult:
-    """Run a full in-memory v2 analysis.
+    """Run a full in-memory analysis.
 
     The returned object owns all processed outputs. Nothing is written unless
     ``export_dir`` is explicitly provided for developer/debug compatibility.

@@ -231,7 +231,7 @@ nem enyhíti.
 """
     )
 
-    st.subheader("V2 optimizer")
+    st.subheader("Edzésterv optimizer")
     for equation in LATEX_EQUATIONS[24:29]:
         st.latex(equation)
     st.markdown(

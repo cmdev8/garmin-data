@@ -1,6 +1,6 @@
 # Garmin Runner
 
-Dashboard-first Garmin FIT running analysis with per-run sklearn ML and a v2-only training plan optimizer.
+Dashboard-first Garmin FIT running analysis with per-run sklearn ML and a training plan optimizer.
 
 ## Streamlit Dashboard
 
@@ -42,7 +42,7 @@ Plan-followed prediction changes are estimates, not guarantees. They combine opt
 
 ## Training Plan Optimizer
 
-The dashboard uses the v2 optimizer only. It generates candidate plans for the configured horizon, validates hard safety constraints, scores valid candidates, and selects the highest-scoring safe plan.
+The dashboard uses one training plan optimizer. It generates candidate plans for the configured horizon, validates hard safety constraints, scores valid candidates, and selects the highest-scoring safe plan.
 
 The optimizer considers:
 
