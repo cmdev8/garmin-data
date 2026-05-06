@@ -11,6 +11,8 @@ def test_streamlit_deployment_pins_modern_reportlab():
     requirements = Path("requirements.txt").read_text(encoding="utf-8")
     pyproject = Path("pyproject.toml").read_text(encoding="utf-8")
 
+    assert "\n.\n" in f"\n{requirements}\n"
+    assert "-e ." not in requirements
     assert "reportlab>=4.2,<5" in requirements
     assert "reportlab>=4.2,<5" in pyproject
     assert "reportlab==3.5.59" not in requirements

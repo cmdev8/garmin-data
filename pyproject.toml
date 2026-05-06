@@ -9,16 +9,16 @@ description = "Deterministic Garmin FIT running analysis with run-walk support."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fitparse",
-  "numpy",
-  "pandas",
-  "pyarrow",
-  "PyYAML",
+  "fitparse>=1.2,<2",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<3.1",
+  "pyarrow>=16,<25",
+  "PyYAML>=6,<7",
   "reportlab>=4.2,<5",
-  "rich",
-  "scikit-learn",
-  "streamlit",
-  "typer",
+  "rich>=13,<16",
+  "scikit-learn>=1.5,<2",
+  "streamlit>=1.50,<2",
+  "typer>=0.12,<1",
 ]
 
 [project.optional-dependencies]
