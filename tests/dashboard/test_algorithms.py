@@ -178,6 +178,7 @@ def test_prediction_page_has_plan_selector():
     source = inspect.getsource(predictions)
 
     assert "Terv kiválasztása" in source
+    assert "Tervhorizont" in source
     assert "st.selectbox" in source
     assert "st.json" not in source
 

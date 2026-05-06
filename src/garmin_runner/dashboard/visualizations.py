@@ -1144,7 +1144,7 @@ def _distance_from_label(label: str) -> float | None:
 
 
 def _percent(value: float) -> str:
-    return percent(value, digits=1, signed=True)
+    return percent(value, digits=2, signed=True)
 
 
 def _signed_duration(seconds_value: float) -> str:

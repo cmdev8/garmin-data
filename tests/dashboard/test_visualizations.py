@@ -239,7 +239,7 @@ def test_plan_adjusted_predictions_missing_candidate_columns_are_baseline_only()
 
     assert table.loc[0, "baseline tempó"] == "5:00/km"
     assert table.loc[0, "terv utáni tempó"] == "5:00/km"
-    assert table.loc[0, "improvement"] == "+0.0%"
+    assert table.loc[0, "improvement"] == "+0.00%"
     assert chart.loc[0, "időnyereség (mp)"] == 0.0
 
 
@@ -261,11 +261,14 @@ def test_plan_adjusted_predictions_show_horizon_scaled_improvement_for_adaptive_
     }
 
     seven_day_table = plan_adjusted_prediction_table(predictions, candidate, horizon_days=7)
+    full_horizon_table = plan_adjusted_prediction_table(predictions, candidate, horizon_days=28)
     seven_day_chart = plan_time_savings_chart(predictions, candidate, horizon_days=7)
     full_horizon_chart = plan_time_savings_chart(predictions, candidate, horizon_days=28)
 
     assert str(seven_day_table.at[0, "terv utáni idő"]) != str(seven_day_table.at[0, "baseline idő"])
-    assert str(seven_day_table.at[0, "improvement"]) == "+0.4%"
+    assert str(seven_day_table.at[0, "improvement"]) == "+0.41%"
+    assert str(full_horizon_table.at[0, "improvement"]) == "+1.63%"
+    assert str(seven_day_table.at[0, "improvement"]) != str(full_horizon_table.at[0, "improvement"])
     assert float(cast(Any, seven_day_chart.at[0, "időnyereség (mp)"])) > 0
     assert float(cast(Any, seven_day_chart.at[0, "időnyereség (mp)"])) < float(cast(Any, full_horizon_chart.at[0, "időnyereség (mp)"]))
     assert float(cast(Any, seven_day_chart.at[1, "időnyereség (mp)"])) < float(cast(Any, full_horizon_chart.at[1, "időnyereség (mp)"]))
@@ -288,7 +291,7 @@ def test_diminishing_returns_factor_reduces_positive_plan_benefit():
     reduced_table = plan_adjusted_prediction_table(predictions, candidate, horizon_days=7, diminishing_returns_factor=0.5)
 
     assert float(cast(Any, reduced_chart.at[0, "időnyereség (mp)"])) < float(cast(Any, full_chart.at[0, "időnyereség (mp)"]))
-    assert reduced_table.loc[0, "improvement"] == "+0.3%"
+    assert reduced_table.loc[0, "improvement"] == "+0.26%"
 
 
 def test_plan_adjusted_predictions_can_worsen_with_high_risk():
@@ -327,7 +330,7 @@ def test_invalid_plan_never_shows_positive_improvement():
     table = plan_adjusted_prediction_table(predictions, candidate)
     chart = plan_time_savings_chart(predictions, candidate)
 
-    assert table.loc[0, "improvement"] == "+0.0%"
+    assert table.loc[0, "improvement"] == "+0.00%"
     assert chart.loc[0, "időnyereség (mp)"] == 0.0
 
 

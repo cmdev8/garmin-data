@@ -46,17 +46,19 @@ def render(data, config=None) -> None:
         for index, (label, value) in enumerate(_compact_candidate_metrics(candidate_row).items()):
             cols[index % 4].metric(label, value)
 
+        horizon_days = data.next_week_plan.get("horizon_days")
         factor = data.ml_result.get("predictions", {}).get("diminishing_returns_factor")
+        st.metric("Tervhorizont", f"{horizon_days or 7} nap")
         st.metric("diminishing returns factor", diminishing_returns_values(data.ml_result)["diminishing returns factor"])
         st.caption("A tervhatás becslés az optimizer adaptáció/fatigue/overload risk score-jaiból készül; nem új model run.")
         st.caption("Rövid, például 7 napos horizontnál a becsült hatás erősen korlátozott, és hosszabb távokon kisebb.")
         st.caption("A diminishing returns factor az alapján csökkenti az optimista predictiont, hogy a feltöltött előzményekben hogyan változott az improvement magasabb edzettségnél.")
-        adjusted = plan_adjusted_prediction_table(data.predictions, candidate_row, data.next_week_plan.get("horizon_days"), factor)
+        adjusted = plan_adjusted_prediction_table(data.predictions, candidate_row, horizon_days, factor)
         if adjusted.empty:
             st.info("Nincs megjeleníthető verseny prediction.")
         else:
             st.dataframe(adjusted, width="stretch", hide_index=True)
-            savings = plan_time_savings_chart(data.predictions, candidate_row, data.next_week_plan.get("horizon_days"), factor)
+            savings = plan_time_savings_chart(data.predictions, candidate_row, horizon_days, factor)
             if not savings.empty:
                 st.bar_chart(savings.set_index("Táv")["időnyereség (mp)"])
 
