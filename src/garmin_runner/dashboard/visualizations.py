@@ -1363,7 +1363,6 @@ def _reason_label(value: str) -> str:
         "Includes run-walk-specific prescriptions": "Futás-séta specifikus előírásokat tartalmaz.",
         "Historical hard-run signal suppressed by fatigue/overload safety rules": "A történeti hard-run jel safety okból nem növelte a minőségi edzések súlyát.",
         "ML prediction blended into optimizer score": "Az ML prediction bekerült az optimizer score számításába.",
-        "ML prediction blended into v2 score": "Az ML prediction bekerült az optimizer score számításába.",
         "Fallback recovery week": "Biztonsági regeneráló hét.",
         "No available training days": "Nincs elérhető edzésnap.",
         "long_run_share_above_35_percent": "A hosszú futás aránya 35% felett lenne.",

@@ -53,10 +53,9 @@ def build_report(
     for key, value in predictions.get("pace_zones", {}).items():
         lines.append(f"- {key}: {value['min_s_per_km']:.0f} to {value['max_s_per_km']:.0f} s/km")
     lines.extend(["", f"## {plan_title}"])
-    if optimizer == "v2" or plan.get("selected_plan_id"):
+    if optimizer or plan.get("selected_plan_id"):
         lines.extend(
             [
-                f"- optimizer: {optimizer}",
                 f"- selected family: {plan.get('family', 'unknown')}",
                 f"- score: {plan.get('score', 0):.2f}",
             ]

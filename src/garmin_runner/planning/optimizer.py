@@ -176,11 +176,11 @@ def run_plan(
     *,
     input_dir: str | Path,
     athlete_config: str | Path | None = None,
-    optimizer: str = "v2",
+    optimizer: str = "default",
     planning_horizon_days: int | None = None,
 ) -> dict:
-    if optimizer != "v2":
-        raise ValueError("standalone plan command currently supports optimizer='v2'")
+    if optimizer not in {"default", "v2"}:
+        raise ValueError("standalone plan command uses the built-in optimizer")
     config = load_athlete_config(athlete_config, planning_horizon_days=planning_horizon_days)
     root = Path(input_dir)
     return run_v2_optimizer(

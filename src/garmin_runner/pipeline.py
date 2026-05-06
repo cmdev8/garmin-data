@@ -99,7 +99,7 @@ def run_analysis(config: AnalysisConfig | None = None, **legacy_kwargs) -> Analy
         training_blocks=training_blocks,
         predictions=predictions,
         plan=optimizer_payload["plan"],
-        optimizer="v2",
+        optimizer="default",
     )
     result = AnalysisResult(
         activities=activities,
