@@ -1,0 +1,34 @@
+athlete:
+  name: "example"
+  timezone: "Europe/Budapest"
+
+goals:
+  target_distance_km: 10
+  target_date: null
+  priority: "improve_endurance"
+
+availability:
+  days_per_week: 4
+  available_days: ["Tuesday", "Thursday", "Saturday", "Sunday"]
+  preferred_long_run_day: "Sunday"
+  max_minutes_per_week: 300
+
+physiology:
+  max_hr: null
+  resting_hr: null
+  lactate_threshold_hr: null
+  lactate_threshold_pace_s_per_km: null
+
+training:
+  max_volume_increase_pct: 10
+  max_hard_days_per_week: 2
+  deload_every_n_weeks: 4
+
+run_walk:
+  enabled: true
+  allow_walk_run_candidates: false
+  min_segment_duration_s: 10
+  default_prescription: "progress_run_duration"
+
+planning:
+  horizon_days: 7

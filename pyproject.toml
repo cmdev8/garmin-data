@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "garmin-runner"
+version = "0.1.0"
+description = "Deterministic Garmin FIT running analysis with run-walk support."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fitparse",
+  "numpy",
+  "pandas",
+  "pyarrow",
+  "PyYAML",
+  "reportlab",
+  "rich",
+  "scikit-learn",
+  "streamlit",
+  "typer",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.mypy]
+python_version = "3.14"
+mypy_path = "src"
+ignore_missing_imports = true
+disallow_untyped_defs = false
+check_untyped_defs = true
